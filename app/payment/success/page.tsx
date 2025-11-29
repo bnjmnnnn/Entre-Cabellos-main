@@ -9,10 +9,14 @@ import { CheckCircle } from "lucide-react"
 
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams()
-  const [orderDetails, setOrderDetails] = useState({
-    order: searchParams.get("order") || "",
-    amount: searchParams.get("amount") || "",
-  })
+  const [orderDetails, setOrderDetails] = useState({ order: "", amount: "" })
+
+  useEffect(() => {
+    setOrderDetails({
+      order: searchParams.get("order") || "",
+      amount: searchParams.get("amount") || "",
+    })
+  }, [searchParams])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
