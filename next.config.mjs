@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+const isGitHubPages = process.env.GITHUB_PAGES === 'true'
+const repoName = 'Entre-Cabellos-main'
+
 const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
@@ -7,8 +10,8 @@ const nextConfig = {
     unoptimized: true,
   },
   output: 'export',
-  basePath: process.env.GITHUB_PAGES === 'true' ? '/Entre-Cabellos-main' : '',
-  assetPrefix: process.env.GITHUB_PAGES === 'true' ? '/Entre-Cabellos-main/' : '',
+  basePath: isGitHubPages ? `/${repoName}` : '',
+  assetPrefix: isGitHubPages ? `/${repoName}/` : '',
 }
 
 export default nextConfig
