@@ -1,18 +1,18 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle } from "lucide-react"
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
   const searchParams = useSearchParams()
-  const [orderDetails, setOrderDetails] = useState({
+  const orderDetails = {
     order: searchParams.get("order") || "",
     amount: searchParams.get("amount") || "",
-  })
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -57,5 +57,17 @@ export default function PaymentSuccessPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    }>
+      <PaymentSuccessContent />
+    </Suspense>
   )
 }
