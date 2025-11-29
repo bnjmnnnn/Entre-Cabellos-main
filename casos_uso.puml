@@ -1,0 +1,48 @@
+@startuml CasosUso_Barberia
+left to right direction
+
+' Actores principales
+actor Cliente
+actor Barbero
+actor WebPay
+
+' Sistema de la barbería
+rectangle "Barbería Entre Cabellos" {
+
+  ' Lo que puede hacer el CLIENTE
+  usecase (Ver Servicios) as UC1
+  usecase (Reservar Cita) as UC2
+  usecase (Pagar Reserva) as UC3
+  usecase (Ver Productos) as UC4
+  usecase (Contactar Barbería) as UC5
+
+  ' Lo que puede hacer el BARBERO (Administrador)
+  usecase (Ver Reservas del Día) as UC6
+  usecase (Gestionar Clientes) as UC7
+  usecase (Administrar Productos) as UC8
+  usecase (Ver Ventas) as UC9
+  usecase (Configurar Horarios) as UC10
+
+}
+
+' Conexiones del Cliente
+Cliente -- UC1
+Cliente -- UC2
+Cliente -- UC3
+Cliente -- UC4
+Cliente -- UC5
+
+' Conexiones del Barbero
+Barbero -- UC6
+Barbero -- UC7
+Barbero -- UC8
+Barbero -- UC9
+Barbero -- UC10
+
+' Conexiones con WebPay
+WebPay -- UC3
+
+' Relación: Para reservar necesitas pagar
+UC2 .> UC3 : <<incluye>>
+
+@enduml

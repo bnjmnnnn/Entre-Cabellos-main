@@ -1,0 +1,28 @@
+graph TD
+    % 1. Definición de las Capas (Nodos Principales)
+    A[Capa 1: PRESENTACIÓN (Frontend)]
+    B[Capa 2: LÓGICA DE NEGOCIO (Backend)]
+    C[Capa 3: DATOS (PostgreSQL)]
+
+    % 2. Flujo Básico entre Capas (Flujo de Secuencia)
+    A -->|1. Petición de Reserva| B
+    B -->|2. Solicitud/Actualización de Datos| C
+    C -->|3. Retorna Datos (Horario, Perfil)| B
+    B -->|4. Respuesta al Cliente| A
+
+    % 3. Integraciones Externas (Flujos Asíncronos/API)
+    subgraph Integraciones Externas
+        D[Pasarela de Pago (Webpay)]
+        E[API Notificaciones (SendGrid/Calendar)]
+    end
+
+    % Conexión de Integraciones a la Capa de Lógica de Negocio (Backend)
+    B -->|5a. Iniciar Cobro| D
+    D -->|5b. Respuesta de Transacción| B
+    
+    B -->|6. Envío de Notificaciones| E
+    
+    % Estilo para claridad
+    style A fill:#E0F7FA, stroke:#00BCD4
+    style B fill:#FFF3E0, stroke:#FF9800
+    style C fill:#E8F5E9, stroke:#4CAF50
