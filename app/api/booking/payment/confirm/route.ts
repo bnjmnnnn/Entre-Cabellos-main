@@ -8,17 +8,17 @@ const API_KEY =
   "579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C"
 
 export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams
+  const token = searchParams.get("token_ws")
+
+  if (!token) {
+    console.error("[Booking Confirm] No token provided")
+    redirect("/booking/payment/error")
+  }
+
+  console.log("[Booking Confirm] Confirming transaction with token:", token.substring(0, 20) + "...")
+
   try {
-    const searchParams = request.nextUrl.searchParams
-    const token = searchParams.get("token_ws")
-
-    if (!token) {
-      console.error("[Booking Confirm] No token provided")
-      redirect("/booking/payment/error")
-    }
-
-    console.log("[Booking Confirm] Confirming transaction with token:", token.substring(0, 20) + "...")
-
     // Confirmar transacción en WebPay
     const response = await fetch(
       `${WEBPAY_URL}/rswebpaytransaction/api/webpay/v1.2/transactions/${token}`,
@@ -57,11 +57,17 @@ export async function GET(request: NextRequest) {
     const sessionId = data.session_id || ""
     const bookingId = sessionId.replace("BOOKING-", "").split("-").slice(0, -1).join("-") || "unknown"
 
+    console.log("[Booking Confirm] Redirecting to success with bookingId:", bookingId)
+
     // Redirigir a página de éxito con los detalles
     redirect(
       `/booking/payment/success?bookingId=${bookingId}&order=${data.buy_order}&amount=${data.amount}`
     )
-  } catch (error) {
+  } catch (error: any) {
+    // No capturar errores de redirect de Next.js
+    if (error?.digest?.includes('NEXT_REDIRECT')) {
+      throw error
+    }
     console.error("[Booking Confirm] Error:", error)
     redirect("/booking/payment/error")
   }

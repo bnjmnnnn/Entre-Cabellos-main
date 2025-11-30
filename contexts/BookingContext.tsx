@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, ReactNode } from "react"
 
 export interface Booking {
   id: string
@@ -28,9 +28,62 @@ interface BookingContextType {
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined)
 
+const STORAGE_KEY = "entre-cabellos-bookings"
+
 export function BookingProvider({ children }: { children: ReactNode }) {
-  // En producción, esto vendría de una base de datos
   const [bookings, setBookings] = useState<Booking[]>([])
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Cargar reservas desde localStorage al iniciar
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        setBookings(parsed)
+      }
+    } catch (error) {
+      console.error("Error loading bookings from localStorage:", error)
+    }
+    setIsLoaded(true)
+  }, [])
+
+  // Guardar reservas en localStorage cuando cambien
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings))
+      } catch (error) {
+        console.error("Error saving bookings to localStorage:", error)
+      }
+    }
+  }, [bookings, isLoaded])
+
+  // Limpiar reservas pendientes antiguas (más de 15 minutos)
+  useEffect(() => {
+    if (!isLoaded) return
+
+    const cleanupInterval = setInterval(() => {
+      const now = Date.now()
+      const fifteenMinutes = 15 * 60 * 1000
+
+      setBookings((prev) =>
+        prev.filter((booking) => {
+          if (booking.status === "pending" && booking.paymentStatus === "pending") {
+            const bookingTime = new Date(booking.createdAt).getTime()
+            const isExpired = now - bookingTime > fifteenMinutes
+            if (isExpired) {
+              console.log(`Cleaning up expired booking: ${booking.id}`)
+            }
+            return !isExpired
+          }
+          return true
+        })
+      )
+    }, 60000) // Verificar cada minuto
+
+    return () => clearInterval(cleanupInterval)
+  }, [isLoaded])
 
   const addBooking = (booking: Omit<Booking, "id" | "createdAt">): Booking => {
     const newBooking: Booking = {
@@ -43,12 +96,14 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   }
 
   const updateBookingStatus = (id: string, status: Booking["status"]) => {
+    console.log(`[BookingContext] Updating status for ${id} to ${status}`)
     setBookings((prev) =>
       prev.map((booking) => (booking.id === id ? { ...booking, status } : booking))
     )
   }
 
   const updatePaymentStatus = (id: string, paymentStatus: Booking["paymentStatus"]) => {
+    console.log(`[BookingContext] Updating payment status for ${id} to ${paymentStatus}`)
     setBookings((prev) =>
       prev.map((booking) => (booking.id === id ? { ...booking, paymentStatus } : booking))
     )

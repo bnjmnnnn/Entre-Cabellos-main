@@ -48,6 +48,7 @@ export function Booking() {
     if (selectedBarber && selectedDate) {
       const dateStr = format(selectedDate, "yyyy-MM-dd")
       const booked = getBookedSlots(selectedBarber, dateStr)
+      console.log(`[Booking] Booked slots for ${selectedBarber} on ${dateStr}:`, booked)
       setBookedSlots(booked)
       
       // Si el horario seleccionado ya está ocupado, deseleccionarlo

@@ -21,6 +21,7 @@ function BookingPaymentSuccessContent() {
   useEffect(() => {
     // Actualizar estado de la reserva cuando el pago es exitoso
     if (bookingId) {
+      console.log("[Success Page] Updating booking:", bookingId)
       updatePaymentStatus(bookingId, "paid")
       updateBookingStatus(bookingId, "confirmed")
     }
