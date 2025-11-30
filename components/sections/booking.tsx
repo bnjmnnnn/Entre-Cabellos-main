@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button"
 import { Label } from "../ui/label"
@@ -9,6 +9,7 @@ import { Calendar } from "../ui/calendar"
 import { Calendar as CalendarIcon, Clock, User, CreditCard, Check } from "lucide-react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
+import { useBooking } from "@/contexts/BookingContext"
 
 const services = [
   { id: "corte", name: "Corte Clásico", price: 12000 },
@@ -27,6 +28,7 @@ const barbers = [
 const timeSlots = ["09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"]
 
 export function Booking() {
+  const { addBooking, getBookedSlots, isTimeSlotAvailable } = useBooking()
   const [step, setStep] = useState(1)
   const [selectedService, setSelectedService] = useState("")
   const [selectedBarber, setSelectedBarber] = useState("")
@@ -35,9 +37,25 @@ export function Booking() {
   const [customerName, setCustomerName] = useState("")
   const [customerEmail, setCustomerEmail] = useState("")
   const [customerPhone, setCustomerPhone] = useState("")
+  const [bookedSlots, setBookedSlots] = useState<string[]>([])
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const selectedServiceData = services.find((s) => s.id === selectedService)
   const selectedBarberData = barbers.find((b) => b.id === selectedBarber)
+
+  // Actualizar horarios ocupados cuando cambien la fecha o barbero
+  useEffect(() => {
+    if (selectedBarber && selectedDate) {
+      const dateStr = format(selectedDate, "yyyy-MM-dd")
+      const booked = getBookedSlots(selectedBarber, dateStr)
+      setBookedSlots(booked)
+      
+      // Si el horario seleccionado ya está ocupado, deseleccionarlo
+      if (selectedTime && booked.includes(selectedTime)) {
+        setSelectedTime("")
+      }
+    }
+  }, [selectedBarber, selectedDate, getBookedSlots, selectedTime])
 
   const handleNextStep = () => {
     setStep(step + 1)
@@ -58,10 +76,82 @@ export function Booking() {
     setCustomerPhone("")
   }
 
-  const handleConfirmBooking = () => {
-    // Aquí podrías integrar con tu backend
-    alert("¡Reserva confirmada! Te enviaremos un email de confirmación.")
-    resetBooking()
+  const handleConfirmBooking = async () => {
+    if (!selectedDate || !selectedServiceData) return
+
+    setIsProcessing(true)
+
+    try {
+      // Verificar disponibilidad una última vez antes de proceder
+      const dateStr = format(selectedDate, "yyyy-MM-dd")
+      if (!isTimeSlotAvailable(selectedBarber, dateStr, selectedTime)) {
+        alert("Lo sentimos, este horario acaba de ser reservado. Por favor selecciona otro.")
+        setSelectedTime("")
+        setIsProcessing(false)
+        return
+      }
+
+      // Crear la reserva temporal (pendiente de pago)
+      const booking = addBooking({
+        serviceId: selectedService,
+        barberId: selectedBarber,
+        date: dateStr,
+        time: selectedTime,
+        customerName,
+        customerEmail,
+        customerPhone,
+        status: "pending",
+        paymentStatus: "pending",
+        amount: selectedServiceData.price,
+      })
+
+      console.log("Booking created:", booking.id)
+
+      // Crear transacción de pago
+      const response = await fetch("/api/booking/payment/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId: booking.id,
+          amount: selectedServiceData.price,
+          customerEmail,
+          serviceDetails: {
+            service: selectedServiceData.name,
+            barber: selectedBarberData?.name,
+            date: format(selectedDate, "PPP", { locale: es }),
+            time: selectedTime,
+          },
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!data.success) {
+        alert("Error al procesar el pago. Por favor intenta nuevamente.")
+        setIsProcessing(false)
+        return
+      }
+
+      // Crear formulario oculto y enviar a WebPay
+      const form = document.createElement("form")
+      form.method = "POST"
+      form.action = data.url
+
+      const tokenInput = document.createElement("input")
+      tokenInput.type = "hidden"
+      tokenInput.name = "token_ws"
+      tokenInput.value = data.token
+
+      form.appendChild(tokenInput)
+      document.body.appendChild(form)
+      form.submit()
+    } catch (error) {
+      console.error("Error al crear reserva:", error)
+      alert("Hubo un error al procesar tu reserva. Por favor intenta nuevamente.")
+      setIsProcessing(false)
+    }
   }
 
   return (
@@ -205,21 +295,33 @@ export function Booking() {
                       Hora disponible
                     </Label>
                     <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                      {timeSlots.map((time) => (
-                        <Button
-                          key={time}
-                          variant={selectedTime === time ? "default" : "outline"}
-                          className={`${
-                            selectedTime === time
-                              ? "bg-primary text-primary-foreground"
-                              : "hover:bg-primary/10"
-                          }`}
-                          onClick={() => setSelectedTime(time)}
-                        >
-                          {time}
-                        </Button>
-                      ))}
+                      {timeSlots.map((time) => {
+                        const isBooked = bookedSlots.includes(time)
+                        return (
+                          <Button
+                            key={time}
+                            variant={selectedTime === time ? "default" : "outline"}
+                            className={`${
+                              selectedTime === time
+                                ? "bg-primary text-primary-foreground"
+                                : isBooked
+                                ? "bg-muted text-muted-foreground cursor-not-allowed opacity-50"
+                                : "hover:bg-primary/10"
+                            }`}
+                            onClick={() => !isBooked && setSelectedTime(time)}
+                            disabled={isBooked}
+                          >
+                            {time}
+                            {isBooked && <span className="ml-1 text-xs">✕</span>}
+                          </Button>
+                        )
+                      })}
                     </div>
+                    {bookedSlots.length > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        Los horarios marcados con ✕ ya están reservados
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -344,21 +446,32 @@ export function Booking() {
                       size="lg"
                       className="flex-1"
                       onClick={handlePreviousStep}
+                      disabled={isProcessing}
                     >
                       Volver
                     </Button>
                     <Button
                       size="lg"
-                      className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-                      disabled={!customerName || !customerEmail || !customerPhone}
+                      className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2"
+                      disabled={!customerName || !customerEmail || !customerPhone || isProcessing}
                       onClick={handleConfirmBooking}
                     >
-                      Confirmar Reserva
+                      {isProcessing ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-foreground border-t-transparent"></div>
+                          Procesando...
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard size={18} />
+                          Proceder al Pago
+                        </>
+                      )}
                     </Button>
                   </div>
 
                   <p className="text-xs text-muted-foreground text-center">
-                    Te enviaremos una confirmación por email
+                    Serás redirigido a WebPay para completar el pago de forma segura
                   </p>
                 </CardContent>
               </Card>
