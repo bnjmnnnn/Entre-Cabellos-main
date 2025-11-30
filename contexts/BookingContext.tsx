@@ -36,16 +36,37 @@ export function BookingProvider({ children }: { children: ReactNode }) {
 
   // Cargar reservas desde localStorage al iniciar
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) {
-        const parsed = JSON.parse(stored)
-        setBookings(parsed)
+    const loadBookings = async () => {
+      try {
+        // Primero intentar cargar desde la API
+        const response = await fetch("/api/bookings")
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && data.bookings) {
+            setBookings(data.bookings)
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.bookings))
+            setIsLoaded(true)
+            return
+          }
+        }
+      } catch (error) {
+        console.log("API not available, loading from localStorage")
       }
-    } catch (error) {
-      console.error("Error loading bookings from localStorage:", error)
+
+      // Si la API falla, cargar desde localStorage como fallback
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY)
+        if (stored) {
+          const parsed = JSON.parse(stored)
+          setBookings(parsed)
+        }
+      } catch (error) {
+        console.error("Error loading bookings from localStorage:", error)
+      }
+      setIsLoaded(true)
     }
-    setIsLoaded(true)
+
+    loadBookings()
   }, [])
 
   // Guardar reservas en localStorage cuando cambien
@@ -85,13 +106,47 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(cleanupInterval)
   }, [isLoaded])
 
+  // Recargar reservas desde la API periódicamente para sincronizar
+  useEffect(() => {
+    if (!isLoaded) return
+
+    const syncInterval = setInterval(async () => {
+      try {
+        const response = await fetch("/api/bookings")
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && data.bookings) {
+            setBookings(data.bookings)
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.bookings))
+          }
+        }
+      } catch (error) {
+        console.error("Error syncing bookings from API:", error)
+      }
+    }, 30000) // Sincronizar cada 30 segundos
+
+    return () => clearInterval(syncInterval)
+  }, [isLoaded])
+
   const addBooking = useCallback((booking: Omit<Booking, "id" | "createdAt">): Booking => {
     const newBooking: Booking = {
       ...booking,
       id: `BK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       createdAt: new Date().toISOString(),
     }
+    
+    // Actualizar estado local inmediatamente
     setBookings((prev) => [...prev, newBooking])
+    
+    // Sincronizar con la API en segundo plano
+    fetch("/api/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newBooking),
+    }).catch((error) => {
+      console.error("Error syncing booking to API:", error)
+    })
+    
     return newBooking
   }, [])
 
@@ -100,6 +155,15 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setBookings((prev) =>
       prev.map((booking) => (booking.id === id ? { ...booking, status } : booking))
     )
+    
+    // Sincronizar con la API
+    fetch("/api/bookings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status }),
+    }).catch((error) => {
+      console.error("Error syncing status to API:", error)
+    })
   }, [])
 
   const updatePaymentStatus = useCallback((id: string, paymentStatus: Booking["paymentStatus"]) => {
@@ -107,6 +171,15 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setBookings((prev) =>
       prev.map((booking) => (booking.id === id ? { ...booking, paymentStatus } : booking))
     )
+    
+    // Sincronizar con la API
+    fetch("/api/bookings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, paymentStatus }),
+    }).catch((error) => {
+      console.error("Error syncing payment status to API:", error)
+    })
   }, [])
 
   const isTimeSlotAvailable = useCallback((barberId: string, date: string, time: string): boolean => {
