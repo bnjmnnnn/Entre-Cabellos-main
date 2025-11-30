@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react"
 
 export interface Booking {
   id: string
@@ -85,7 +85,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(cleanupInterval)
   }, [isLoaded])
 
-  const addBooking = (booking: Omit<Booking, "id" | "createdAt">): Booking => {
+  const addBooking = useCallback((booking: Omit<Booking, "id" | "createdAt">): Booking => {
     const newBooking: Booking = {
       ...booking,
       id: `BK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -93,23 +93,23 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     }
     setBookings((prev) => [...prev, newBooking])
     return newBooking
-  }
+  }, [])
 
-  const updateBookingStatus = (id: string, status: Booking["status"]) => {
+  const updateBookingStatus = useCallback((id: string, status: Booking["status"]) => {
     console.log(`[BookingContext] Updating status for ${id} to ${status}`)
     setBookings((prev) =>
       prev.map((booking) => (booking.id === id ? { ...booking, status } : booking))
     )
-  }
+  }, [])
 
-  const updatePaymentStatus = (id: string, paymentStatus: Booking["paymentStatus"]) => {
+  const updatePaymentStatus = useCallback((id: string, paymentStatus: Booking["paymentStatus"]) => {
     console.log(`[BookingContext] Updating payment status for ${id} to ${paymentStatus}`)
     setBookings((prev) =>
       prev.map((booking) => (booking.id === id ? { ...booking, paymentStatus } : booking))
     )
-  }
+  }, [])
 
-  const isTimeSlotAvailable = (barberId: string, date: string, time: string): boolean => {
+  const isTimeSlotAvailable = useCallback((barberId: string, date: string, time: string): boolean => {
     return !bookings.some(
       (booking) =>
         booking.barberId === barberId &&
@@ -118,9 +118,9 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         (booking.status === "confirmed" || booking.status === "pending") &&
         booking.paymentStatus !== "failed"
     )
-  }
+  }, [bookings])
 
-  const getBookedSlots = (barberId: string, date: string): string[] => {
+  const getBookedSlots = useCallback((barberId: string, date: string): string[] => {
     return bookings
       .filter(
         (booking) =>
@@ -130,7 +130,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
           booking.paymentStatus !== "failed"
       )
       .map((booking) => booking.time)
-  }
+  }, [bookings])
 
   return (
     <BookingContext.Provider

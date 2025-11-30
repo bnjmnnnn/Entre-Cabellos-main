@@ -20,12 +20,13 @@ function BookingPaymentSuccessContent() {
 
   useEffect(() => {
     // Actualizar estado de la reserva cuando el pago es exitoso
-    if (bookingId) {
+    if (bookingId && bookingId !== "unknown") {
       console.log("[Success Page] Updating booking:", bookingId)
       updatePaymentStatus(bookingId, "paid")
       updateBookingStatus(bookingId, "confirmed")
     }
-  }, [bookingId, updatePaymentStatus, updateBookingStatus])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookingId]) // Solo cuando cambie el bookingId, no las funciones
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
