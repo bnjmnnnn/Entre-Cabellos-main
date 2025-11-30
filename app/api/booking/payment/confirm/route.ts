@@ -44,6 +44,7 @@ export async function GET(request: NextRequest) {
       buyOrder: data.buy_order,
       status: data.status,
       amount: data.amount,
+      sessionId: data.session_id,
     })
 
     // Verificar que el pago fue aprobado
@@ -52,8 +53,9 @@ export async function GET(request: NextRequest) {
       redirect(`/booking/payment/error?status=${data.status}`)
     }
 
-    // Extraer bookingId del session_id
-    const bookingId = data.session_id?.split("-")[1] || "unknown"
+    // Extraer bookingId del session_id (formato: BOOKING-BK-xxx-yyy-timestamp)
+    const sessionId = data.session_id || ""
+    const bookingId = sessionId.replace("BOOKING-", "").split("-").slice(0, -1).join("-") || "unknown"
 
     // Redirigir a página de éxito con los detalles
     redirect(
