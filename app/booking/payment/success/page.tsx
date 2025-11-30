@@ -75,16 +75,16 @@ function BookingPaymentSuccessContent() {
           </div>
 
           <div className="space-y-2">
-            <Link href="/">
-              <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button asChild className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link href="/">
                 Volver al Inicio
-              </Button>
-            </Link>
-            <Link href="/#reserva">
-              <Button variant="outline" className="w-full">
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full">
+              <Link href="/#reserva">
                 Hacer otra Reserva
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
 
           <p className="text-xs text-center text-muted-foreground">
