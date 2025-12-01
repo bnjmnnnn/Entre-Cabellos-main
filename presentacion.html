@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entre Cabellos - Presentación del Proyecto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-content {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: #764ba2;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            color: #667eea;
+            margin: 25px 0 15px 0;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .rubrica-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .rubrica-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-size: 1.1rem;
+        }
+
+        .rubrica-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .rubrica-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .criterio {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .puntaje-max {
+            text-align: center;
+            font-weight: bold;
+            color: #4caf50;
+            font-size: 1.2rem;
+        }
+
+        .puntaje-obtenido {
+            text-align: center;
+            font-weight: bold;
+            color: #2196f3;
+            font-size: 1.2rem;
+        }
+
+        .total-row {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .score-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .tech-badge {
+            background: white;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            border: 2px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .tech-badge:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .observaciones {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .observaciones h3 {
+            color: #856404;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .observaciones ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .observaciones li {
+            padding: 8px 0;
+            color: #856404;
+            font-size: 1.1rem;
+        }
+
+        .observaciones li:before {
+            content: "⚠️ ";
+            margin-right: 10px;
+        }
+
+        .nav-buttons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            z-index: 1001;
+            transition: width 0.3s ease;
+        }
+
+        .excellence-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #333;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 20px 0;
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .demo-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 20px 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .demo-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .slide-content {
+                padding: 30px 20px;
+            }
+            
+            .nav-buttons {
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .nav-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="container">
+        <!-- Slide 1: Portada -->
+        <div class="slide" id="slide1">
+            <div class="slide-content">
+                <h1>🪒 Entre Cabellos</h1>
+                <p style="text-align: center; font-size: 1.5rem; color: #764ba2; font-weight: 600;">
+                    Sistema de Gestión para Barbería Profesional
+                </p>
+                <p style="text-align: center; margin-top: 30px; font-size: 1.2rem;">
+                    Plataforma web completa con sistema de reservas, pasarela de pago integrada y gestión administrativa
+                </p>
+                <div style="text-align: center; margin-top: 40px;">
+                    <div class="excellence-badge">
+                        ⭐ Calificación: 57/65 - Excelente
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://entre-cabellos-main.vercel.app" target="_blank" class="demo-link">
+                        🌐 Ver Demo en Vivo
+                    </a>
+                    <a href="https://github.com/bnjmnnnn/Entre-Cabellos-main" target="_blank" class="demo-link">
+                        📦 Repositorio GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Resumen del Producto -->
+        <div class="slide" id="slide2">
+            <div class="slide-content">
+                <h2>📋 Resumen del Producto</h2>
+                <div class="score-badge">Puntaje: 3/5 - Excelente</div>
+                
+                <h3>¿Qué es Entre Cabellos?</h3>
+                <p>
+                    Una solución digital completa para modernizar la gestión de barberías, permitiendo a los clientes 
+                    reservar citas online con pago integrado y a los administradores gestionar servicios, productos y reservas 
+                    desde un panel intuitivo.
+                </p>
+                
+                <h3>Problema que Resuelve</h3>
+                <p>
+                    Las barberías tradicionales enfrentan desafíos en la gestión manual de citas, lo que genera:
+                </p>
+                <ul style="margin-left: 40px; font-size: 1.1rem; line-height: 2;">
+                    <li>❌ Doble reserva de horarios</li>
+                    <li>❌ Pérdida de clientes por falta de disponibilidad online</li>
+                    <li>❌ Gestión ineficiente de pagos y productos</li>
+                    <li>❌ Falta de registro digital de transacciones</li>
+                </ul>
+                
+                <h3>Solución</h3>
+                <p>
+                    Sistema web que automatiza el proceso de reservas con:
+                </p>
+                <ul style="margin-left: 40px; font-size: 1.1rem; line-height: 2;">
+                    <li>✅ Bloqueo automático de horarios reservados</li>
+                    <li>✅ Pago online seguro mediante WebPay Plus</li>
+                    <li>✅ Panel administrativo para gestión completa</li>
+                    <li>✅ Catálogo de productos con carrito de compras</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Introducción y Empresa -->
+        <div class="slide" id="slide3">
+            <div class="slide-content">
+                <h2>🏢 Descripción de la Empresa</h2>
+                <div class="score-badge">Puntaje: 9/10 - Excelente</div>
+                
+                <h3>Introducción (4/5)</h3>
+                <p>
+                    Entre Cabellos es un emprendimiento digital que surge de la necesidad de modernizar el sector de 
+                    las barberías tradicionales en Chile. El proyecto combina diseño moderno, funcionalidad intuitiva 
+                    y tecnología de punta para ofrecer una experiencia premium tanto a clientes como a propietarios.
+                </p>
+                
+                <h3>Descripción de la Empresa (5/5)</h3>
+                <p>
+                    <strong>Misión:</strong> Digitalizar y optimizar la gestión de barberías mediante tecnología accesible 
+                    y fácil de usar.
+                </p>
+                <p>
+                    <strong>Visión:</strong> Ser la plataforma líder en gestión digital para barberías en Latinoamérica.
+                </p>
+                <p>
+                    <strong>Valores:</strong>
+                </p>
+                <ul style="margin-left: 40px; font-size: 1.1rem; line-height: 2;">
+                    <li>💡 Innovación tecnológica</li>
+                    <li>🎯 Enfoque en experiencia del usuario</li>
+                    <li>🔒 Seguridad en transacciones</li>
+                    <li>⚡ Eficiencia operativa</li>
+                </ul>
+                
+                <p style="margin-top: 30px;">
+                    <strong>Mercado Objetivo:</strong> Barberías pequeñas y medianas que buscan profesionalizar su servicio 
+                    y aumentar sus ventas mediante presencia digital.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Demostración del Producto -->
+        <div class="slide" id="slide4">
+            <div class="slide-content">
+                <h2>💻 Demostración del Producto</h2>
+                <div class="score-badge">Puntaje: 20/20 - Excelente</div>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>🏠 Landing Page</h3>
+                        <p>Diseño moderno y profesional con información de servicios, galería y contacto</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>📅 Sistema de Reservas</h3>
+                        <p>Proceso en 3 pasos: selección de servicio/barbero, fecha/hora, y confirmación con pago</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🔒 Bloqueo de Horarios</h3>
+                        <p>Sincronización en tiempo real que previene dobles reservas</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>💳 Pasarela de Pago</h3>
+                        <p>Integración con WebPay Plus de Transbank para pagos seguros</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🛒 Carrito de Compras</h3>
+                        <p>Sistema completo de e-commerce para productos de barbería</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>👨‍💼 Panel Admin</h3>
+                        <p>Gestión de clientes, pedidos, productos, reservas y configuraciones</p>
+                    </div>
+                </div>
+                
+                <h3>Tecnologías Utilizadas</h3>
+                <div class="tech-stack">
+                    <span class="tech-badge">Next.js 16</span>
+                    <span class="tech-badge">React 18</span>
+                    <span class="tech-badge">TypeScript</span>
+                    <span class="tech-badge">Tailwind CSS 4</span>
+                    <span class="tech-badge">shadcn/ui</span>
+                    <span class="tech-badge">WebPay Plus</span>
+                    <span class="tech-badge">Vercel</span>
+                    <span class="tech-badge">Git & GitHub</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Conclusiones vs Objetivos -->
+        <div class="slide" id="slide5">
+            <div class="slide-content">
+                <h2>🎯 Conclusiones vs Objetivos Específicos</h2>
+                <div class="score-badge">Puntaje: 5/5 - Excelente</div>
+                
+                <h3>Objetivos Planteados</h3>
+                <ul style="margin-left: 40px; font-size: 1.1rem; line-height: 2;">
+                    <li>✅ Desarrollar sistema de reservas online funcional</li>
+                    <li>✅ Integrar pasarela de pago segura</li>
+                    <li>✅ Implementar bloqueo automático de horarios</li>
+                    <li>✅ Crear catálogo de productos con carrito</li>
+                    <li>✅ Diseñar panel administrativo intuitivo</li>
+                    <li>✅ Desplegar en producción con dominio público</li>
+                </ul>
+                
+                <h3>Resultados Alcanzados</h3>
+                <p>
+                    <strong>✅ 100% de objetivos cumplidos</strong>
+                </p>
+                <ul style="margin-left: 40px; font-size: 1.1rem; line-height: 2;">
+                    <li>Sistema funcional desplegado en Vercel</li>
+                    <li>Integración completa con WebPay Plus</li>
+                    <li>Sincronización de reservas entre usuarios</li>
+                    <li>Experiencia de usuario fluida y profesional</li>
+                    <li>Código bien estructurado y documentado</li>
+                </ul>
+                
+                <h3>Aprendizajes Clave</h3>
+                <ul style="margin-left: 40px; font-size: 1.1rem; line-height: 2;">
+                    <li>📚 Integración de APIs de pago complejas</li>
+                    <li>🔄 Manejo de estado global con Context API</li>
+                    <li>💾 Persistencia de datos con localStorage y APIs</li>
+                    <li>🎨 Diseño responsivo con Tailwind CSS</li>
+                    <li>🚀 Deployment continuo con Vercel</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Rúbrica de Evaluación -->
+        <div class="slide" id="slide6">
+            <div class="slide-content">
+                <h2>📊 Rúbrica de Evaluación</h2>
+                
+                <table class="rubrica-table">
+                    <thead>
+                        <tr>
+                            <th>Criterio de Evaluación</th>
+                            <th>Puntaje Máximo</th>
+                            <th>Puntaje Obtenido</th>
+                            <th>Calificación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="criterio">Resumen del producto</td>
+                            <td class="puntaje-max">5</td>
+                            <td class="puntaje-obtenido">3</td>
+                            <td>Excelente</td>
+                        </tr>
+                        <tr>
+                            <td class="criterio">Introducción</td>
+                            <td class="puntaje-max">5</td>
+                            <td class="puntaje-obtenido">4</td>
+                            <td>Bueno</td>
+                        </tr>
+                        <tr>
+                            <td class="criterio">Descripción Empresa</td>
+                            <td class="puntaje-max">5</td>
+                            <td class="puntaje-obtenido">5</td>
+                            <td>Excelente</td>
+                        </tr>
+                        <tr>
+                            <td class="criterio">Problema</td>
+                            <td class="puntaje-max">10</td>
+                            <td class="puntaje-obtenido">7</td>
+                            <td>Bueno</td>
+                        </tr>
+                        <tr>
+                            <td class="criterio">Solución Propuesta</td>
+                            <td class="puntaje-max">10</td>
+                            <td class="puntaje-obtenido">10</td>
+                            <td>Excelente</td>
+                        </tr>
+                        <tr>
+                            <td class="criterio">Demostración Producto</td>
+                            <td class="puntaje-max">10</td>
+                            <td class="puntaje-obtenido">10</td>
+                            <td>Excelente</td>
+                        </tr>
+                        <tr>
+                            <td class="criterio">Conclusiones vs. objetivos específicos</td>
+                            <td class="puntaje-max">5</td>
+                            <td class="puntaje-obtenido">5</td>
+                            <td>Excelente</td>
+                        </tr>
+                        <tr>
+                            <td class="criterio">Bibliografía en formato APA</td>
+                            <td class="puntaje-max">5</td>
+                            <td class="puntaje-obtenido">5</td>
+                            <td>Excelente</td>
+                        </tr>
+                        <tr>
+                            <td class="criterio">Tiempo presentación</td>
+                            <td class="puntaje-max">5</td>
+                            <td class="puntaje-obtenido">4</td>
+                            <td>Bueno</td>
+                        </tr>
+                        <tr>
+                            <td class="criterio">Ortografía y redacción</td>
+                            <td class="puntaje-max">5</td>
+                            <td class="puntaje-obtenido">4</td>
+                            <td>Bueno</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>TOTAL</td>
+                            <td class="puntaje-max">65</td>
+                            <td class="puntaje-obtenido">57</td>
+                            <td>87.7%</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <div class="excellence-badge">
+                        🏆 Calificación Final: EXCELENTE
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Observaciones y Mejoras -->
+        <div class="slide" id="slide7">
+            <div class="slide-content">
+                <h2>📝 Observaciones y Áreas de Mejora</h2>
+                
+                <div class="observaciones">
+                    <h3>Observaciones del Evaluador</h3>
+                    <ul>
+                        <li>Buenas tardes a todos y todas</li>
+                        <li>Indicador del problema podría ser más específico</li>
+                        <li>Hosting - NIC: Considerar dominio propio</li>
+                        <li>Tilde en "quiénes": Corregir ortografía</li>
+                        <li>Tiempo exceso: Optimizar duración de presentación</li>
+                    </ul>
+                </div>
+                
+                <h3>Mejoras Futuras Propuestas</h3>
+                <ul style="margin-left: 40px; font-size: 1.1rem; line-height: 2;">
+                    <li>🗄️ <strong>Base de Datos:</strong> Migrar a PostgreSQL/MongoDB para persistencia real</li>
+                    <li>📧 <strong>Notificaciones:</strong> Emails automáticos de confirmación con SendGrid</li>
+                    <li>🌐 <strong>Dominio Propio:</strong> Adquirir entrecabellos.cl</li>
+                    <li>👤 <strong>Autenticación:</strong> Sistema de usuarios con NextAuth.js</li>
+                    <li>📊 <strong>Dashboard Analytics:</strong> Estadísticas de ventas y reservas</li>
+                    <li>📱 <strong>App Móvil:</strong> React Native para iOS/Android</li>
+                    <li>🔔 <strong>Recordatorios:</strong> SMS/WhatsApp antes de la cita</li>
+                    <li>⭐ <strong>Sistema de Reseñas:</strong> Valoraciones de clientes</li>
+                </ul>
+                
+                <h3>Plan de Escalabilidad</h3>
+                <p>
+                    El sistema está diseñado con arquitectura modular que permite:
+                </p>
+                <ul style="margin-left: 40px; font-size: 1.1rem; line-height: 2;">
+                    <li>Agregar múltiples sucursales</li>
+                    <li>Integrar más métodos de pago (Mercado Pago, PayPal)</li>
+                    <li>Programa de fidelización de clientes</li>
+                    <li>Sistema de cupones y descuentos</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Cierre -->
+        <div class="slide" id="slide8">
+            <div class="slide-content">
+                <h1>✨ ¡Gracias!</h1>
+                <p style="text-align: center; font-size: 1.5rem; margin: 30px 0;">
+                    Entre Cabellos - Transformamos tu estilo, cuidamos tu esencia
+                </p>
+                
+                <div style="text-align: center; margin: 40px 0;">
+                    <div class="excellence-badge">
+                        🏆 Proyecto Completado con Éxito
+                    </div>
+                </div>
+                
+                <h3 style="text-align: center;">Enlaces del Proyecto</h3>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://entre-cabellos-main.vercel.app" target="_blank" class="demo-link">
+                        🌐 Demo en Vivo
+                    </a>
+                    <a href="https://github.com/bnjmnnnn/Entre-Cabellos-main" target="_blank" class="demo-link">
+                        📦 GitHub
+                    </a>
+                </div>
+                
+                <h3 style="text-align: center; margin-top: 50px;">Contacto</h3>
+                <p style="text-align: center; font-size: 1.2rem;">
+                    📧 info@entrecabellos.cl<br>
+                    📱 +56 9 1234 5678<br>
+                    📍 Santiago, Chile
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button class="nav-btn" onclick="prevSlide()">◀ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente ▶</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 8;
+
+        function updateProgress() {
+            const progress = (currentSlide / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            
+            if (n > totalSlides) {
+                currentSlide = 1;
+            }
+            if (n < 1) {
+                currentSlide = totalSlides;
+            }
+            
+            slides.forEach((slide, index) => {
+                if (index + 1 === currentSlide) {
+                    slide.style.display = 'flex';
+                    slide.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    slide.style.display = 'none';
+                }
+            });
+            
+            updateProgress();
+        }
+
+        function nextSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Inicializar
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

@@ -1,5 +1,39 @@
 import { NextRequest, NextResponse } from "next/server"
 import { redirect } from "next/navigation"
+import { sendBookingConfirmation } from "@/lib/email"
+
+// Helpers para mapear IDs a nombres
+const SERVICES = {
+  corte: "Corte de Cabello",
+  barba: "Arreglo de Barba",
+  "corte-barba": "Corte + Barba",
+  tinte: "Tintura",
+  tratamiento: "Tratamiento Capilar",
+}
+
+const BARBERS = {
+  carlos: "Carlos Martínez",
+  pedro: "Pedro González",
+  juan: "Juan Ramírez",
+}
+
+function getServiceName(id: string): string {
+  return SERVICES[id as keyof typeof SERVICES] || id
+}
+
+function getBarberName(id: string): string {
+  return BARBERS[id as keyof typeof BARBERS] || id
+}
+
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString("es-CL", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
+}
 
 const WEBPAY_URL = process.env.WEBPAY_URL || "https://webpay3gint.transbank.cl"
 const COMMERCE_CODE = process.env.WEBPAY_COMMERCE_CODE || "597055555532"
@@ -58,6 +92,32 @@ export async function GET(request: NextRequest) {
     const bookingId = sessionId.replace("BOOKING-", "").split("-").slice(0, -1).join("-") || "unknown"
 
     console.log("[Booking Confirm] Redirecting to success with bookingId:", bookingId)
+
+    // Obtener datos de la reserva para el email
+    try {
+      const bookingsResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/bookings`)
+      if (bookingsResponse.ok) {
+        const bookingsData = await bookingsResponse.json()
+        const booking = bookingsData.bookings?.find((b: any) => b.id === bookingId)
+        
+        if (booking) {
+          // Enviar email de confirmación
+          await sendBookingConfirmation({
+            customerName: booking.customerName,
+            customerEmail: booking.customerEmail,
+            serviceName: getServiceName(booking.serviceId),
+            barberName: getBarberName(booking.barberId),
+            date: formatDate(booking.date),
+            time: booking.time,
+            amount: data.amount,
+            bookingId: bookingId,
+          })
+        }
+      }
+    } catch (emailError) {
+      console.error('[Booking Confirm] Error sending email:', emailError)
+      // No detener el flujo si falla el email
+    }
 
     // Redirigir a página de éxito con los detalles
     redirect(
