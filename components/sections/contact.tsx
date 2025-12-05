@@ -85,9 +85,9 @@ export function Contact() {
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">Ubicación</h4>
                     <p className="text-sm text-muted-foreground">
-                      Av. Providencia 1234
+                      Lincoln 2267
                       <br />
-                      Santiago, Chile
+                      Lo Espejo, Santiago, Chile
                     </p>
                   </div>
                 </div>
@@ -132,12 +132,16 @@ export function Contact() {
 
             {/* Map */}
             <Card className="bg-card border-2 border-border overflow-hidden">
-              <div className="h-64 bg-secondary/30 flex items-center justify-center">
-                <div className="text-center space-y-2">
-                  <MapPin size={48} className="text-primary mx-auto" />
-                  <p className="text-muted-foreground">Mapa de ubicación</p>
-                </div>
-              </div>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3325.8!2d-70.6877!3d-33.5267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662d0ef5c5c5c5d%3A0x5c5c5c5c5c5c5c5c!2sLincoln%202267%2C%20Lo%20Espejo%2C%20Regi%C3%B3n%20Metropolitana%2C%20Chile!5e0!3m2!1ses!2scl!4v1234567890123!5m2!1ses!2scl"
+                width="100%"
+                height="256"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Ubicación Entre Cabellos - Lincoln 2267, Lo Espejo"
+              />
             </Card>
           </div>
         </div>

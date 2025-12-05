@@ -6,12 +6,12 @@ import { Users, UserCheck, TrendingUp } from "lucide-react"
 const mockClients = [
   {
     id: 1,
-    name: "Carlos Rodríguez",
-    email: "carlos@email.com",
+    name: "Benjamín Fernández",
+    email: "bfernandezt@utem.cl",
     phone: "+56 9 1234 5678",
-    lastVisit: "2025-01-10",
-    totalVisits: 24,
-    totalSpent: 432000,
+    lastVisit: "2025-01-11",
+    totalVisits: 10,
+    totalSpent: 110000,
     status: "vip",
   },
   {
@@ -20,8 +20,8 @@ const mockClients = [
     email: "miguel@email.com",
     phone: "+56 9 2345 6789",
     lastVisit: "2025-01-12",
-    totalVisits: 18,
-    totalSpent: 324000,
+    totalVisits: 6,
+    totalSpent: 70000,
     status: "regular",
   },
   {
@@ -30,8 +30,8 @@ const mockClients = [
     email: "diego@email.com",
     phone: "+56 9 3456 7890",
     lastVisit: "2025-01-14",
-    totalVisits: 15,
-    totalSpent: 270000,
+    totalVisits: 2,
+    totalSpent: 30000,
     status: "regular",
   },
   {
